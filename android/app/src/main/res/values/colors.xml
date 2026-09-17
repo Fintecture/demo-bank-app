@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fintecture design system tokens. See .claude/fintecture-branding.skill. -->
+<resources>
+    <color name="ftc_navy">#0B1643</color>
+    <color name="ftc_mint">#1DDBA9</color>
+    <color name="ftc_mint_deep">#10B981</color>
+    <color name="ftc_canvas">#FFFFFF</color>
+    <color name="ftc_canvas_soft">#F7F8FA</color>
+    <color name="ftc_body">#26304A</color>
+    <color name="ftc_mute">#5B6478</color>
+    <color name="ftc_hairline">#E3E6ED</color>
+</resources>

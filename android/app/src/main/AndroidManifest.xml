@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="false"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
+        android:theme="@style/Theme.FintectureDemoBank">
+
+        <!-- singleTask so a second handoff re-enters this instance through onNewIntent rather than
+             stacking another copy behind the first. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- The verified link. autoVerify makes Android fetch assetlinks.json from each host at
+                 install time, so these hosts must serve it with this app's signing fingerprint
+                 before the handoff works. Until then, force the association with the adb command in
+                 README.md. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="api.test.fintecture.com" android:path="/demo-bank/auth" />
+                <data android:scheme="https" android:host="api.sandbox.fintecture.com" android:path="/demo-bank/auth" />
+                <!-- Legacy name for the same sandbox host: the redirect URL comes from service
+                     discovery and may still use it. Both must verify, so both are claimed. -->
+                <data android:scheme="https" android:host="api-sandbox.fintecture.com" android:path="/demo-bank/auth" />
+            </intent-filter>
+
+            <!-- The custom scheme, which needs no domain association and survives a raw WebView that
+                 would swallow the https link. Kept as a separate diagnostic, not the default. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ftedemobank" android:host="auth" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.FintectureDemoBank" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/ftc_navy</item>
+        <item name="colorOnPrimary">@color/ftc_canvas</item>
+        <item name="colorSecondary">@color/ftc_mint</item>
+        <item name="android:colorBackground">@color/ftc_canvas</item>
+        <item name="android:statusBarColor">@color/ftc_navy</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

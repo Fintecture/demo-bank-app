@@ -1,0 +1,24 @@
+# Local machine paths, never publishable
+local.properties
+android/local.properties
+
+# Build output
+build/
+android/build/
+android/app/build/
+.gradle/
+android/.gradle/
+*.apk
+*.aab
+
+# Signing material. The release keystore lives in the company password manager and is supplied
+# through FTE_DEMOBANK_KEYSTORE at build time; nothing signing related belongs in this repository.
+*.jks
+*.keystore
+.pw
+keystore.properties
+
+# IDE
+.idea/
+*.iml
+.DS_Store

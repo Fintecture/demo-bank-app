@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fintecture Demo Bank</string>
+    <string name="brand">fintecture</string>
+    <string name="title">Demo Bank</string>
+    <string name="sandbox_notice">Simulator. No money moves and no real bank is contacted.</string>
+
+    <string name="session_status_label">Session status</string>
+    <string name="transfer_state_label">Transfer state</string>
+    <string name="transfer_reason_label">Rejection reason</string>
+
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="strand">Confirm but do not return me</string>
+    <string name="strand_hint">Completes the payment and deliberately leaves you here, reproducing a bank that pays you and then strands you.</string>
+
+    <string name="no_session">No Demo Bank payment session in this link. Start a payment in Connect on test or sandbox and pick Demo Bank. Account information links are handled in the browser.</string>
+    <string name="stranded">Callback driven. You have not been returned to the merchant, on purpose. Switch back by hand to see what the merchant does.</string>
+    <string name="strand_not_applied">The server answered %1$d instead of redirecting, so the outcome was not applied. Check the session in the console.</string>
+    <string name="strand_failed">Could not reach the callback.</string>
+</resources>
