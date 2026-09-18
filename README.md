@@ -1,80 +1,90 @@
 # Fintecture Demo Bank App
 
-A simulated bank that is a real installed app, so an integrator can test the app to app handoff and
-the return to their own app in sandbox rather than discovering in production that neither works.
+An installable simulated bank for testing the app-to-app handoff and the return to your own app,
+against Fintecture sandbox and test.
 
-While the Demo Bank is only a web page, the operating system is never asked to open anything, so the
-two things a mobile integrator most needs to test are the two things sandbox cannot reproduce.
-
-## What it does
-
-Connect hands the payer to `/demo-bank/auth`. If this app is installed, the OS opens it instead of a
-browser; if not, the existing web consent screen is served and nothing changes. The app shows the
-outcome pickers, and on confirm continues to `/oauth/callback` so the rest of the flow runs exactly
-as it does today.
-
-**It deliberately shows no payment details.** The point under test is whether the OS hands off and
-whether the payer comes back. An amount on screen would prove nothing and would have delayed the
-first device evidence, so the payment data stays server side where it already lives.
+Requires Android 8.0 or later. Supports PIS. It reaches only the sandbox and test environments; the
+route it uses does not exist in production.
 
 ## Install
 
 Download the APK from [Releases](https://github.com/Fintecture/demo-bank-app/releases), check its
-SHA-256 against the one published with the release, and install it on an Android device. Android
-will ask you to allow installing from this source.
+SHA-256 against the value published with the release, and install it. Android asks you to allow
+installing from this source.
 
-It only ever talks to Fintecture's test and sandbox environments. The production route does not
-exist, so the app cannot move money and cannot be pointed at a real payment.
+## How it works
+
+Connect sends the payer to `/demo-bank/auth`. With this app installed, Android opens it instead of a
+browser. Without it, the web consent screen is served as before.
+
+The app shows the payment outcome pickers. On confirm it continues to `/oauth/callback`, so the rest
+of the journey runs unchanged and your `redirect_uri` is called as a real bank would call it.
 
 ## Controls
 
-Released builds show **Confirm** only: it continues to the callback with the chosen outcome, as a
-real bank app would.
+Released builds show **Confirm**, which continues to the callback with the selected outcome.
 
-Builds from source also expose two diagnostics we use internally, and which are deliberately absent
-from the released app:
+Builds from source additionally show:
 
 | | |
 |---|---|
-| **Confirm but do not return me** | completes the payment and strands the payer, reproducing a bank that takes the money and never comes back |
+| **Confirm but do not return me** | completes the payment without returning the payer, reproducing a bank that does not come back |
 | **Cancel** | leaves without completing |
 
-## Building
+## Hosts
+
+The app claims `/demo-bank/auth` on:
+
+```
+api.test.fintecture.com
+api.sandbox.fintecture.com
+api-sandbox.fintecture.com   (legacy name for the same sandbox host)
+```
+
+Production is not claimed.
+
+## App link verification
+
+Android fetches `assetlinks.json` from each claimed host **at install time** and does not retry on
+its own. The host must already publish this app's signing fingerprint, otherwise the link opens in
+the browser. If the association file is published after you install, reinstall the app.
+
+To inspect or force verification on a test device:
+
+```sh
+adb shell pm get-app-links com.fintecture.demobank
+adb shell pm verify-app-links --re-verify com.fintecture.demobank
+```
+
+`verified` against each host means the handoff will work. A numeric state such as `1024` means
+verification failed.
+
+## Custom scheme
+
+`ftedemobank://auth` opens the app without any domain association, which is useful when an https
+link is swallowed by a WebView. It carries no host, so such a link must pass `origin` explicitly.
+
+## Building from source
 
 ```sh
 cd android
 ./gradlew :app:assembleDebug
 ```
 
-Needs `local.properties` with `sdk.dir` pointing at the Android SDK, and a JDK (Android Studio's
-bundled `jbr` works). The APK lands in `app/build/outputs/apk/debug/`.
+Needs `local.properties` with `sdk.dir` pointing at the Android SDK, and JDK 17 or 21. The APK is
+written to `android/app/build/outputs/apk/debug/`.
 
-## Before the verified link works
-
-`autoVerify` makes Android fetch `assetlinks.json` from each declared host at install time, so those
-hosts must serve it with **this app's signing fingerprint** before the handoff resolves. Until then
-the link opens in the browser and the app looks broken for a reason that has nothing to do with the
-integration.
-
-Force the association while testing:
+For a signed release build, supply the signing material through the environment:
 
 ```sh
-adb shell pm set-app-links --package com.fintecture.demobank 0 all
-adb shell pm verify-app-links --re-verify com.fintecture.demobank
-adb shell pm get-app-links com.fintecture.demobank
+export FTE_DEMOBANK_KEYSTORE=/path/to/keystore.jks
+export FTE_DEMOBANK_KEYSTORE_PASSWORD=...
+export FTE_DEMOBANK_KEY_ALIAS=demobank
+./gradlew :app:assembleRelease
 ```
 
-The custom scheme (`ftedemobank://auth`) needs no association and is the fallback diagnostic: it
-survives a raw WebView that would swallow the https link. It carries no host, so a scheme link must
-pass `origin` explicitly or the app has nowhere to send the payer back to.
+Without those variables the release build succeeds unsigned.
 
-## Hosts
+## Documentation
 
-Declared for `api.test.fintecture.com`, `api-sandbox.fintecture.com` and
-`api-sandbox-test.fintecture.com`. Production is deliberately absent: the route is not mounted there.
-
-## Branding
-
-Fintecture design system tokens, from `.claude/fintecture-branding.skill`: navy `#0B1643` as the
-structural surface, mint `#1DDBA9` as the single accent, white canvas, hairline borders and 12–16dp
-radii.
+https://doc.fintecture.com/docs/connect-mobile-app-integration
