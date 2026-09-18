@@ -14,8 +14,11 @@ installing from this source.
 
 ## How it works
 
-Connect sends the payer to `/demo-bank/auth`. With this app installed, Android opens it instead of a
-browser. Without it, the web consent screen is served as before.
+Select **Demo Bank** in the Connect bank list. This app handles that bank only; any other bank
+behaves exactly as it does today.
+
+Connect then sends the payer to `/demo-bank/auth`. With this app installed, Android opens it instead
+of a browser. Without it, the web consent screen is served as before.
 
 The app shows the payment outcome pickers. On confirm it continues to `/oauth/callback`, so the rest
 of the journey runs unchanged and your `redirect_uri` is called as a real bank would call it.
